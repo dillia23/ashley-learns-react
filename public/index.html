@@ -51,7 +51,7 @@
           }
         });
 
-        //part 15 - 16
+        //part 15 - 16 + 18
         var CommentForm = React.createClass({
           handleSubmit: function(e) {
             e.preventDefault();
@@ -60,7 +60,7 @@
             if (!text || !author) {
                 return;
             };
-            // TODO: send request to the server
+            this.props.onCommentSubmit({author: author, text: text});
             React.findDOMNode(this.refs.author).value = '';
             React.findDOMNode(this.refs.text).value = '';
             return;
@@ -76,7 +76,7 @@
           }
         });
 
-        //part 1 + 3 + 9 + 12 - 14
+        //part 1 + 3 + 9 + 12 - 14 + 17 - 18
         var CommentBox = React.createClass({
             getInitialState: function() {
                 return {data: []};
@@ -94,6 +94,20 @@
                     }.bind(this)
                 });
             },
+            handleCommentSubmit: function(comment) {
+                $.ajax({
+                    url: this.props.url,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: comment,
+                    success: function(data) {
+                        this.setState({data: data});
+                    }.bind(this),
+                    error: function(xhr, status, err) {
+                        console.error(this.props.url, status, error.toString());
+                    }
+                });
+            },
             componentDidMount: function() {
                 this.loadCommentsFromServer();
                 setInterval(this.loadCommentsFromServer, this.props.pollInterval);
@@ -103,7 +117,7 @@
                     <div className="commentBox">
                         <h1>Comments</h1>
                         <CommentList data={this.state.data} />
-                        <CommentForm />
+                        <CommentForm onCommentSubmit={this.handleCommentSubmit} />
                     </div>
                 );
             }
