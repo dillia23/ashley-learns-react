@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Demo!</title>
+
+	    <link rel="stylesheet" href="css/base.css" />
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/react.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.0/JSXTransformer.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.2/marked.min.js"></script>
+	</head>
+	<body>
+		<script type="text/jsx">
+		var WelcomeMessage = React.createClass({
+			render: function() {
+				return(
+					<div>
+						<h2>Hello, {this.props.subject}</h2>
+					</div>
+				);
+			}
+		});
+
+		var WelcomeBox = React.createClass({
+			render: function() {
+				return (
+					<div className="welcomeBox">
+						<h1>Welcome!</h1>
+						<WelcomeMessage subject={this.state.subject} />
+						<NameForm onNameSubmit={this.handleSubmit} />
+					</div>
+				)
+			},
+			getInitialState: function() {
+				return {subject: "World"}
+			},
+			handleSubmit: function(subject) {
+				console.log(subject);
+				this.setState(subject);
+			}
+		});
+
+		var NameForm = React.createClass({
+			handleSubmit: function(e) {
+				e.preventDefault();
+				var subject = React.findDOMNode(this.refs.subject).value;
+				if(!subject) return;
+				this.props.onNameSubmit({subject: subject});
+				React.findDOMNode(this.refs.subject).value = "";
+			},
+          render: function() {
+            return (
+              <form className="nameForm" onSubmit={this.handleSubmit}>
+                <input type="text" placeholder="Your Name" ref="subject" />
+                <input type="submit" value="Post" />
+              </form>
+            );
+          }
+		});
+
+		React.render(
+			<WelcomeBox />,
+			document.body
+		);
+		</script>
+	</body>
+</html>
